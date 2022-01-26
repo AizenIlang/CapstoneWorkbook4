@@ -1,0 +1,39 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "MedicalDatasetA",
+						"type": "DatasetReference"
+					},
+					"name": "DatasetA"
+				},
+				{
+					"dataset": {
+						"referenceName": "MedicalDatasetB",
+						"type": "DatasetReference"
+					},
+					"name": "DatasetB"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable1",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Join1"
+				}
+			],
+			"script": "source(output(\n\t\t{Employee Name} as string,\n\t\tGender as string,\n\t\tDateofBirth as string,\n\t\tZipcode as string,\n\t\tEmp_Status as string,\n\t\tEducation as string,\n\t\tPatientID as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpartitionBy('hash', 1)) ~> DatasetA\nsource(output(\n\t\tMarital_Status as string,\n\t\tNo_Children as string,\n\t\tAncestry as string,\n\t\tAvg_Commute as string,\n\t\tDaily_Internet_Use as string,\n\t\tAvlbl_Vehicle as string,\n\t\tMilitary_Service as string,\n\t\tDisease as string,\n\t\tPatientID as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpartitionBy('hash', 1)) ~> DatasetB\nDatasetA, DatasetB join(DatasetA@PatientID == DatasetB@PatientID,\n\tjoinType:'inner',\n\tpartitionBy('hash', 1),\n\tbroadcast: 'auto')~> Join1\nJoin1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tPatientID = DatasetB@PatientID,\n\t\t{Employee Name},\n\t\tGender,\n\t\tDateofBirth,\n\t\tZipcode,\n\t\tEmp_Status,\n\t\tEducation,\n\t\tPatientID = DatasetA@PatientID,\n\t\tMarital_Status,\n\t\tNo_Children,\n\t\tAncestry,\n\t\tAvg_Commute,\n\t\tDaily_Internet_Use,\n\t\tAvlbl_Vehicle,\n\t\tMilitary_Service,\n\t\tDisease\n\t),\n\tpartitionBy('hash', 1)) ~> sink1"
+		}
+	}
+}

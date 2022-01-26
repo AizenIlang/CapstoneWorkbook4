@@ -1,0 +1,58 @@
+{
+	"name": "MedicalDatasetB",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "DatasetB",
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "DatasetA&B.xlsx",
+				"container": "capstone4roman"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "Marital_Status",
+				"type": "String"
+			},
+			{
+				"name": "No_Children",
+				"type": "String"
+			},
+			{
+				"name": "Ancestry",
+				"type": "String"
+			},
+			{
+				"name": "Avg_Commute",
+				"type": "String"
+			},
+			{
+				"name": "Daily_Internet_Use",
+				"type": "String"
+			},
+			{
+				"name": "Avlbl_Vehicle",
+				"type": "String"
+			},
+			{
+				"name": "Military_Service",
+				"type": "String"
+			},
+			{
+				"name": "Disease",
+				"type": "String"
+			},
+			{
+				"name": "PatientID",
+				"type": "String"
+			}
+		]
+	}
+}

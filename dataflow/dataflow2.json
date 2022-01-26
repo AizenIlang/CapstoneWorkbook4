@@ -1,0 +1,39 @@
+{
+	"name": "dataflow2",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable1",
+						"type": "DatasetReference"
+					},
+					"name": "MergedDataset"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable2",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable3",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "ConditionalSplit1"
+				}
+			],
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tpartitionBy('hash', 1)) ~> MergedDataset\nMergedDataset split(Gender=='Male',\n\tdisjoint: false,\n\tpartitionBy('hash', 1)) ~> ConditionalSplit1@(Male, Female)\nConditionalSplit1@Male sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tPatientID as integer,\n\t\tPatient_Name as string,\n\t\tGender as string,\n\t\tDateofBirth as date,\n\t\tZipcode as integer,\n\t\tEmp_status as string,\n\t\tEducation as string,\n\t\tMarital_Status as string,\n\t\tNo_Children as integer,\n\t\tAncestry as string,\n\t\tAvg_Commute as double,\n\t\tDaily_Internet_Use as double,\n\t\tAvlbl_Vehicle as integer,\n\t\tMilitary_Service as string,\n\t\tDisease as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tpartitionBy('hash', 1)) ~> sink1\nConditionalSplit1@Female sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tPatientID as integer,\n\t\tPatient_Name as string,\n\t\tGender as string,\n\t\tDateofBirth as date,\n\t\tZipcode as integer,\n\t\tEmp_status as string,\n\t\tEducation as string,\n\t\tMarital_Status as string,\n\t\tNo_Children as integer,\n\t\tAncestry as string,\n\t\tAvg_Commute as double,\n\t\tDaily_Internet_Use as double,\n\t\tAvlbl_Vehicle as integer,\n\t\tMilitary_Service as string,\n\t\tDisease as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tpartitionBy('hash', 1)) ~> sink2"
+		}
+	}
+}
