@@ -22,7 +22,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "AzureSqlTable1",
+						"referenceName": "MergedTable",
 						"type": "DatasetReference"
 					},
 					"name": "sink1"
