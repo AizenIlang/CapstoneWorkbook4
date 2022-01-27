@@ -1,0 +1,46 @@
+{
+	"name": "AzureSqlTable4",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "PatientID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Patient_Name",
+				"type": "varchar"
+			},
+			{
+				"name": "Gender",
+				"type": "varchar"
+			},
+			{
+				"name": "Emp_status",
+				"type": "varchar"
+			},
+			{
+				"name": "Marital_Status",
+				"type": "varchar"
+			},
+			{
+				"name": "Military_Service",
+				"type": "varchar"
+			},
+			{
+				"name": "Disease",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "MedDtaEmp_employed"
+		}
+	}
+}

@@ -1,0 +1,43 @@
+{
+	"name": "SplitEmpStatus",
+	"properties": {
+		"description": "Splitting Patients based on employment status",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "MedicalDatasetA",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "MedicalDatasetB",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable4",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Join1"
+				},
+				{
+					"name": "ConditionalSplit1"
+				}
+			],
+			"script": "source(output(\n\t\t{Employee Name} as string,\n\t\tGender as string,\n\t\tDateofBirth as string,\n\t\tZipcode as string,\n\t\tEmp_Status as string,\n\t\tEducation as string,\n\t\tPatientID as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpartitionBy('hash', 1)) ~> source1\nsource(output(\n\t\tMarital_Status as string,\n\t\tNo_Children as string,\n\t\tAncestry as string,\n\t\tAvg_Commute as string,\n\t\tDaily_Internet_Use as string,\n\t\tAvlbl_Vehicle as string,\n\t\tMilitary_Service as string,\n\t\tDisease as string,\n\t\tPatientID as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpartitionBy('hash', 1)) ~> source2\nsource1, source2 join(source1@PatientID == source2@PatientID,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join1\nJoin1 split(Emp_Status==\"employed\",\n\tEmp_Status=='unemployed',\n\tEmp_Status==\"retired\",\n\tEmp_Status==\"student\",\n\tdisjoint: false,\n\tpartitionBy('hash', 1)) ~> ConditionalSplit1@(Employed, UnEmployed, Retired, Student)\nConditionalSplit1@Employed sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tPatientID as integer,\n\t\tPatient_Name as string,\n\t\tGender as string,\n\t\tEmp_status as string,\n\t\tMarital_Status as string,\n\t\tMilitary_Service as string,\n\t\tDisease as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tPatientID = ConditionalSplit1@Employed@PatientID,\n\t\t{Employee Name},\n\t\tGender,\n\t\tEmp_Status,\n\t\tMarital_Status,\n\t\tMilitary_Service,\n\t\tDisease\n\t)) ~> sink1"
+		}
+	}
+}
