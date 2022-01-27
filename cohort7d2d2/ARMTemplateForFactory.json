@@ -1,0 +1,894 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "cohort7d2d2"
+		},
+		"AzureBlobStorage1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
+		},
+		"AzureSqlDatabase1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow1",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"DatasetA": {},
+									"DatasetB": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dataflow1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MergedTable')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "MedicalDatasetMerged"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "PatientID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Patient_Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Gender",
+						"type": "varchar"
+					},
+					{
+						"name": "DateofBirth",
+						"type": "date"
+					},
+					{
+						"name": "Zipcode",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Emp_status",
+						"type": "varchar"
+					},
+					{
+						"name": "Education",
+						"type": "varchar"
+					},
+					{
+						"name": "Marital_Status",
+						"type": "varchar"
+					},
+					{
+						"name": "No_Children",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Ancestry",
+						"type": "varchar"
+					},
+					{
+						"name": "Avg_Commute",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Daily_Internet_Use",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Avlbl_Vehicle",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Military_Service",
+						"type": "varchar"
+					},
+					{
+						"name": "Disease",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "DatasetMergedMale"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable3')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "PatientID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Patient_Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Gender",
+						"type": "varchar"
+					},
+					{
+						"name": "DateofBirth",
+						"type": "date"
+					},
+					{
+						"name": "Zipcode",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Emp_status",
+						"type": "varchar"
+					},
+					{
+						"name": "Education",
+						"type": "varchar"
+					},
+					{
+						"name": "Marital_Status",
+						"type": "varchar"
+					},
+					{
+						"name": "No_Children",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Ancestry",
+						"type": "varchar"
+					},
+					{
+						"name": "Avg_Commute",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Daily_Internet_Use",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Avlbl_Vehicle",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Military_Service",
+						"type": "varchar"
+					},
+					{
+						"name": "Disease",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "DatasetMergedFemale"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MedicalDatasetA')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Excel",
+				"typeProperties": {
+					"sheetName": "DatasetA",
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "DatasetA&B.xlsx",
+						"container": "capstone4roman"
+					},
+					"firstRowAsHeader": true
+				},
+				"schema": [
+					{
+						"name": "Employee Name",
+						"type": "String"
+					},
+					{
+						"name": "Gender",
+						"type": "String"
+					},
+					{
+						"name": "DateofBirth",
+						"type": "String"
+					},
+					{
+						"name": "Zipcode",
+						"type": "String"
+					},
+					{
+						"name": "Emp_Status",
+						"type": "String"
+					},
+					{
+						"name": "Education",
+						"type": "String"
+					},
+					{
+						"name": "PatientID",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MedicalDatasetB')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Excel",
+				"typeProperties": {
+					"sheetName": "DatasetB",
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "DatasetA&B.xlsx",
+						"container": "capstone4roman"
+					},
+					"firstRowAsHeader": true
+				},
+				"schema": [
+					{
+						"name": "Marital_Status",
+						"type": "String"
+					},
+					{
+						"name": "No_Children",
+						"type": "String"
+					},
+					{
+						"name": "Ancestry",
+						"type": "String"
+					},
+					{
+						"name": "Avg_Commute",
+						"type": "String"
+					},
+					{
+						"name": "Daily_Internet_Use",
+						"type": "String"
+					},
+					{
+						"name": "Avlbl_Vehicle",
+						"type": "String"
+					},
+					{
+						"name": "Military_Service",
+						"type": "String"
+					},
+					{
+						"name": "Disease",
+						"type": "String"
+					},
+					{
+						"name": "PatientID",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureBlobStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureBlobStorage1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureSqlDatabase1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "MedicalDatasetA",
+								"type": "DatasetReference"
+							},
+							"name": "DatasetA"
+						},
+						{
+							"dataset": {
+								"referenceName": "MedicalDatasetB",
+								"type": "DatasetReference"
+							},
+							"name": "DatasetB"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "MergedTable",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Join1"
+						}
+					],
+					"script": "source(output(\n\t\t{Employee Name} as string,\n\t\tGender as string,\n\t\tDateofBirth as string,\n\t\tZipcode as string,\n\t\tEmp_Status as string,\n\t\tEducation as string,\n\t\tPatientID as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpartitionBy('hash', 1)) ~> DatasetA\nsource(output(\n\t\tMarital_Status as string,\n\t\tNo_Children as string,\n\t\tAncestry as string,\n\t\tAvg_Commute as string,\n\t\tDaily_Internet_Use as string,\n\t\tAvlbl_Vehicle as string,\n\t\tMilitary_Service as string,\n\t\tDisease as string,\n\t\tPatientID as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpartitionBy('hash', 1)) ~> DatasetB\nDatasetA, DatasetB join(DatasetA@PatientID == DatasetB@PatientID,\n\tjoinType:'inner',\n\tpartitionBy('hash', 1),\n\tbroadcast: 'auto')~> Join1\nJoin1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tPatientID = DatasetB@PatientID,\n\t\t{Employee Name},\n\t\tGender,\n\t\tDateofBirth,\n\t\tZipcode,\n\t\tEmp_Status,\n\t\tEducation,\n\t\tPatientID = DatasetA@PatientID,\n\t\tMarital_Status,\n\t\tNo_Children,\n\t\tAncestry,\n\t\tAvg_Commute,\n\t\tDaily_Internet_Use,\n\t\tAvlbl_Vehicle,\n\t\tMilitary_Service,\n\t\tDisease\n\t),\n\tpartitionBy('hash', 1)) ~> sink1"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/MedicalDatasetA')]",
+				"[concat(variables('factoryId'), '/datasets/MedicalDatasetB')]",
+				"[concat(variables('factoryId'), '/datasets/MergedTable')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow2')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "MedicalDatasetA",
+								"type": "DatasetReference"
+							},
+							"name": "MergedDataset"
+						},
+						{
+							"dataset": {
+								"referenceName": "MedicalDatasetB",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable2",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable3",
+								"type": "DatasetReference"
+							},
+							"name": "sink2"
+						}
+					],
+					"transformations": [
+						{
+							"name": "ConditionalSplit1"
+						},
+						{
+							"name": "Join1"
+						}
+					],
+					"script": "source(output(\n\t\t{Employee Name} as string,\n\t\tGender as string,\n\t\tDateofBirth as string,\n\t\tZipcode as string,\n\t\tEmp_Status as string,\n\t\tEducation as string,\n\t\tPatientID as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpartitionBy('hash', 1)) ~> MergedDataset\nsource(output(\n\t\tMarital_Status as string,\n\t\tNo_Children as string,\n\t\tAncestry as string,\n\t\tAvg_Commute as string,\n\t\tDaily_Internet_Use as string,\n\t\tAvlbl_Vehicle as string,\n\t\tMilitary_Service as string,\n\t\tDisease as string,\n\t\tPatientID as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nJoin1 split(Gender=='male',\n\tdisjoint: false,\n\tpartitionBy('hash', 1)) ~> ConditionalSplit1@(Male, Female)\nMergedDataset, source1 join(MergedDataset@PatientID == source1@PatientID,\n\tjoinType:'inner',\n\tpartitionBy('hash', 1),\n\tbroadcast: 'auto')~> Join1\nConditionalSplit1@Male sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tPatientID as integer,\n\t\tPatient_Name as string,\n\t\tGender as string,\n\t\tDateofBirth as date,\n\t\tZipcode as integer,\n\t\tEmp_status as string,\n\t\tEducation as string,\n\t\tMarital_Status as string,\n\t\tNo_Children as integer,\n\t\tAncestry as string,\n\t\tAvg_Commute as double,\n\t\tDaily_Internet_Use as double,\n\t\tAvlbl_Vehicle as integer,\n\t\tMilitary_Service as string,\n\t\tDisease as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tPatientID = ConditionalSplit1@Male@PatientID,\n\t\tPatient_Name = {Employee Name},\n\t\tGender,\n\t\tDateofBirth,\n\t\tZipcode,\n\t\tEmp_status = Emp_Status,\n\t\tEducation,\n\t\tMarital_Status,\n\t\tNo_Children,\n\t\tAncestry,\n\t\tAvg_Commute,\n\t\tDaily_Internet_Use,\n\t\tAvlbl_Vehicle,\n\t\tMilitary_Service,\n\t\tDisease\n\t),\n\tpartitionBy('hash', 1)) ~> sink1\nConditionalSplit1@Female sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tPatientID as integer,\n\t\tPatient_Name as string,\n\t\tGender as string,\n\t\tDateofBirth as date,\n\t\tZipcode as integer,\n\t\tEmp_status as string,\n\t\tEducation as string,\n\t\tMarital_Status as string,\n\t\tNo_Children as integer,\n\t\tAncestry as string,\n\t\tAvg_Commute as double,\n\t\tDaily_Internet_Use as double,\n\t\tAvlbl_Vehicle as integer,\n\t\tMilitary_Service as string,\n\t\tDisease as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tPatientID = ConditionalSplit1@Female@PatientID,\n\t\tPatient_Name = {Employee Name},\n\t\tGender,\n\t\tDateofBirth,\n\t\tZipcode,\n\t\tEmp_status = Emp_Status,\n\t\tEducation,\n\t\tMarital_Status,\n\t\tNo_Children,\n\t\tAncestry,\n\t\tAvg_Commute,\n\t\tDaily_Internet_Use,\n\t\tAvlbl_Vehicle,\n\t\tMilitary_Service,\n\t\tDisease\n\t),\n\tpartitionBy('hash', 1)) ~> sink2"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/MedicalDatasetA')]",
+				"[concat(variables('factoryId'), '/datasets/MedicalDatasetB')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable2')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable3')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow2",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"MergedDataset": {},
+									"source1": {},
+									"sink1": {},
+									"sink2": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dataflow2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SplitEmpStatus')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Splitting Patients based on employment status",
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "MedicalDatasetA",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"dataset": {
+								"referenceName": "MedicalDatasetB",
+								"type": "DatasetReference"
+							},
+							"name": "source2"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable4",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable5",
+								"type": "DatasetReference"
+							},
+							"name": "sink2"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable6",
+								"type": "DatasetReference"
+							},
+							"name": "sink3"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable7",
+								"type": "DatasetReference"
+							},
+							"name": "sink4"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Join1"
+						},
+						{
+							"name": "ConditionalSplit1"
+						}
+					],
+					"script": "source(output(\n\t\t{Employee Name} as string,\n\t\tGender as string,\n\t\tDateofBirth as string,\n\t\tZipcode as string,\n\t\tEmp_Status as string,\n\t\tEducation as string,\n\t\tPatientID as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpartitionBy('hash', 1)) ~> source1\nsource(output(\n\t\tMarital_Status as string,\n\t\tNo_Children as string,\n\t\tAncestry as string,\n\t\tAvg_Commute as string,\n\t\tDaily_Internet_Use as string,\n\t\tAvlbl_Vehicle as string,\n\t\tMilitary_Service as string,\n\t\tDisease as string,\n\t\tPatientID as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpartitionBy('hash', 1)) ~> source2\nsource1, source2 join(source1@PatientID == source2@PatientID,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join1\nJoin1 split(Emp_Status==\"employed\",\n\tEmp_Status=='unemployed',\n\tEmp_Status==\"retired\",\n\tEmp_Status==\"student\",\n\tdisjoint: false,\n\tpartitionBy('hash', 1)) ~> ConditionalSplit1@(Employed, UnEmployed, Retired, Student)\nConditionalSplit1@Employed sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tPatientID as integer,\n\t\tPatient_Name as string,\n\t\tGender as string,\n\t\tEmp_status as string,\n\t\tMarital_Status as string,\n\t\tMilitary_Service as string,\n\t\tDisease as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tPatientID = ConditionalSplit1@Employed@PatientID,\n\t\t{Employee Name},\n\t\tGender,\n\t\tEmp_Status,\n\t\tMarital_Status,\n\t\tMilitary_Service,\n\t\tDisease\n\t)) ~> sink1\nConditionalSplit1@UnEmployed sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tPatientID as integer,\n\t\tPatient_Name as string,\n\t\tGender as string,\n\t\tEmp_status as string,\n\t\tMarital_Status as string,\n\t\tMilitary_Service as string,\n\t\tDisease as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tPatientID = ConditionalSplit1@UnEmployed@PatientID,\n\t\tPatient_Name = {Employee Name},\n\t\tGender,\n\t\tEmp_status = Emp_Status,\n\t\tMarital_Status,\n\t\tMilitary_Service,\n\t\tDisease\n\t),\n\tpartitionBy('hash', 1)) ~> sink2\nConditionalSplit1@Retired sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tPatientID as integer,\n\t\tPatient_Name as string,\n\t\tGender as string,\n\t\tEmp_status as string,\n\t\tMarital_Status as string,\n\t\tMilitary_Service as string,\n\t\tDisease as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink3\nConditionalSplit1@Student sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tPatientID as integer,\n\t\tPatient_Name as string,\n\t\tGender as string,\n\t\tEmp_status as string,\n\t\tMarital_Status as string,\n\t\tMilitary_Service as string,\n\t\tDisease as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink4"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/MedicalDatasetA')]",
+				"[concat(variables('factoryId'), '/datasets/MedicalDatasetB')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable4')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable5')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable6')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable7')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable4')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "PatientID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Patient_Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Gender",
+						"type": "varchar"
+					},
+					{
+						"name": "Emp_status",
+						"type": "varchar"
+					},
+					{
+						"name": "Marital_Status",
+						"type": "varchar"
+					},
+					{
+						"name": "Military_Service",
+						"type": "varchar"
+					},
+					{
+						"name": "Disease",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "MedDtaEmp_employed"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable5')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "PatientID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Patient_Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Gender",
+						"type": "varchar"
+					},
+					{
+						"name": "Emp_status",
+						"type": "varchar"
+					},
+					{
+						"name": "Marital_Status",
+						"type": "varchar"
+					},
+					{
+						"name": "Military_Service",
+						"type": "varchar"
+					},
+					{
+						"name": "Disease",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "MedDtaEmp_unemployed"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable6')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "PatientID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Patient_Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Gender",
+						"type": "varchar"
+					},
+					{
+						"name": "Emp_status",
+						"type": "varchar"
+					},
+					{
+						"name": "Marital_Status",
+						"type": "varchar"
+					},
+					{
+						"name": "Military_Service",
+						"type": "varchar"
+					},
+					{
+						"name": "Disease",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "MedDtaEmp_retired"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable7')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "PatientID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Patient_Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Gender",
+						"type": "varchar"
+					},
+					{
+						"name": "Emp_status",
+						"type": "varchar"
+					},
+					{
+						"name": "Marital_Status",
+						"type": "varchar"
+					},
+					{
+						"name": "Military_Service",
+						"type": "varchar"
+					},
+					{
+						"name": "Disease",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "MedDtaEmp_student"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline3')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "SplitEmpStatus",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"source2": {},
+									"sink1": {},
+									"sink2": {},
+									"sink3": {},
+									"sink4": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/SplitEmpStatus')]"
+			]
+		}
+	]
+}
